@@ -2,9 +2,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
+import { createClient } from '@supabase/supabase-js'
+
+// Initialize Supabase client
+const supabaseUrl = 'https://supabase.lovable.dev'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvbW1ka2V2eXNmeG9qc3VjYWlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQxNTY3OTYsImV4cCI6MjAyOTczMjc5Nn0.zOVJZs0nCK1pmhBFLZh8kvAVPdqDxZ3HbrYzo9O5zWc'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const Index = () => {
   const [name, setName] = useState("");
@@ -14,20 +20,76 @@ const Index = () => {
   const [time, setTime] = useState("");
   const [guests, setGuests] = useState("2");
   const [activeCategory, setActiveCategory] = useState("north-indian");
+  const [subscribeEmail, setSubscribeEmail] = useState("");
 
-  const handleReservation = (e: React.FormEvent) => {
+  const handleReservation = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Reservation Request Received",
-      description: `Thank you ${name}! We'll confirm your table for ${guests} guests on ${date} at ${time} shortly.`,
-    });
-    // Reset form
-    setName("");
-    setEmail("");
-    setPhone("");
-    setDate("");
-    setTime("");
-    setGuests("2");
+    
+    try {
+      // Save reservation to Supabase
+      const { error } = await supabase
+        .from('reservations')
+        .insert([
+          { 
+            name, 
+            email, 
+            phone, 
+            reservation_date: date, 
+            reservation_time: time, 
+            guests: parseInt(guests) 
+          }
+        ]);
+        
+      if (error) throw error;
+      
+      toast({
+        title: "Reservation Request Received",
+        description: `Thank you ${name}! We'll confirm your table for ${guests} guests on ${date} at ${time} shortly.`,
+      });
+      
+      // Reset form
+      setName("");
+      setEmail("");
+      setPhone("");
+      setDate("");
+      setTime("");
+      setGuests("2");
+    } catch (error) {
+      console.error("Error saving reservation:", error);
+      toast({
+        title: "Reservation Failed",
+        description: "We couldn't process your reservation. Please try again later.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      // Save subscription to Supabase
+      const { error } = await supabase
+        .from('subscribers')
+        .insert([{ email: subscribeEmail }]);
+        
+      if (error) throw error;
+      
+      toast({
+        title: "Subscription Successful",
+        description: "Thank you for subscribing to our exciting offers!",
+      });
+      
+      // Reset form
+      setSubscribeEmail("");
+    } catch (error) {
+      console.error("Error subscribing:", error);
+      toast({
+        title: "Subscription Failed",
+        description: "We couldn't process your subscription. Please try again later.",
+        variant: "destructive"
+      });
+    }
   };
 
   const reviews = [
@@ -44,7 +106,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#f9f5f0] font-comic">
       {/* Header & Navigation */}
-      <header className="bg-[#5c2018] text-white">
+      <header className="bg-gradient-to-r from-[#5c2018] to-[#7a2b20] text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-center md:text-left mb-4 md:mb-0">
@@ -52,10 +114,10 @@ const Index = () => {
               <p className="text-sm md:text-base">The Family Restaurant</p>
             </div>
             <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-              <a href="#about" className="hover:text-[#f3bf7a] transition-colors">About</a>
-              <a href="#menu" className="hover:text-[#f3bf7a] transition-colors">Menu</a>
-              <a href="#reserve" className="hover:text-[#f3bf7a] transition-colors">Reservations</a>
-              <a href="#contact" className="hover:text-[#f3bf7a] transition-colors">Contact</a>
+              <a href="#about" className="text-lg hover:text-[#f3bf7a] transition-colors">About</a>
+              <a href="#menu" className="text-lg hover:text-[#f3bf7a] transition-colors">Menu</a>
+              <a href="#reserve" className="text-lg hover:text-[#f3bf7a] transition-colors">Reservations</a>
+              <a href="#contact" className="text-lg hover:text-[#f3bf7a] transition-colors">Contact</a>
             </nav>
           </div>
         </div>
@@ -71,14 +133,14 @@ const Index = () => {
               <Button 
                 onClick={() => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' })}
                 size="lg" 
-                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c] text-lg py-6 px-8"
+                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c] text-lg py-7 px-9"
               >
                 View Menu
               </Button>
               <Button 
                 onClick={() => document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' })}
                 size="lg"
-                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c] text-lg py-6 px-8"
+                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c] text-lg py-7 px-9"
               >
                 Book a Table
               </Button>
@@ -178,10 +240,10 @@ const Index = () => {
           {/* Featured dishes based on category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {activeCategory === 'north-indian' && [
-              { name: "Butter Chicken", price: "₹350", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&q=80", description: "Tender chicken in a rich, creamy tomato sauce" },
-              { name: "Paneer Tikka", price: "₹280", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&q=80", description: "Marinated cottage cheese grilled to perfection" },
-              { name: "Dal Makhani", price: "₹220", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80", description: "Slow-cooked black lentils with cream and spices" },
-              { name: "Chicken Biryani", price: "₹320", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80", description: "Aromatic rice dish with tender chicken pieces" }
+              { name: "Butter Chicken", price: "₹350", image: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&q=80", description: "Tender chicken in a rich, creamy tomato sauce" },
+              { name: "Paneer Tikka", price: "₹280", image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&q=80", description: "Marinated cottage cheese grilled to perfection" },
+              { name: "Dal Makhani", price: "₹220", image: "https://images.unsplash.com/photo-1626132527578-6a2b85cb1ceb?auto=format&fit=crop&q=80", description: "Slow-cooked black lentils with cream and spices" },
+              { name: "Chicken Biryani", price: "₹320", image: "https://images.unsplash.com/photo-1589249941113-7d40d86ec868?auto=format&fit=crop&q=80", description: "Aromatic rice dish with tender chicken pieces" }
             ].map((dish, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
@@ -196,10 +258,10 @@ const Index = () => {
             ))}
             
             {activeCategory === 'south-indian' && [
-              { name: "Masala Dosa", price: "₹180", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&q=80", description: "Crispy rice pancake filled with spiced potatoes" },
-              { name: "Idli Sambhar", price: "₹140", image: "https://images.unsplash.com/photo-1574289176974-60c2887cdd84?auto=format&fit=crop&q=80", description: "Steamed rice cakes served with lentil soup and chutney" },
-              { name: "Rava Uttapam", price: "₹170", image: "https://images.unsplash.com/photo-1626788460425-6f51fef14c1f?auto=format&fit=crop&q=80", description: "Semolina pancakes topped with vegetables" },
-              { name: "Chettinad Chicken", price: "₹340", image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&q=80", description: "Spicy chicken curry with aromatic spices from Chettinad region" }
+              { name: "Masala Dosa", price: "₹180", image: "https://images.unsplash.com/photo-1627662168223-7df99068099a?auto=format&fit=crop&q=80", description: "Crispy rice pancake filled with spiced potatoes" },
+              { name: "Idli Sambhar", price: "₹140", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&q=80", description: "Steamed rice cakes served with lentil soup and chutney" },
+              { name: "Rava Uttapam", price: "₹170", image: "https://images.unsplash.com/photo-1610192244261-3f33de3f72e1?auto=format&fit=crop&q=80", description: "Semolina pancakes topped with vegetables" },
+              { name: "Chettinad Chicken", price: "₹340", image: "https://images.unsplash.com/photo-1604502076110-48c760b19069?auto=format&fit=crop&q=80", description: "Spicy chicken curry with aromatic spices from Chettinad region" }
             ].map((dish, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
@@ -214,10 +276,10 @@ const Index = () => {
             ))}
             
             {activeCategory === 'indo-chinese' && [
-              { name: "Vegetable Manchurian", price: "₹220", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&q=80", description: "Vegetable balls in a sweet and spicy sauce" },
-              { name: "Chilli Paneer", price: "₹270", image: "https://images.unsplash.com/photo-1567337710282-00832b415979?auto=format&fit=crop&q=80", description: "Cottage cheese tossed with bell peppers in spicy sauce" },
-              { name: "Hakka Noodles", price: "₹200", image: "https://images.unsplash.com/photo-1619414506841-a036b516d530?auto=format&fit=crop&q=80", description: "Stir-fried noodles with vegetables in Indo-Chinese style" },
-              { name: "Szechuan Chicken", price: "₹290", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&q=80", description: "Spicy chicken dish with Szechuan peppers and vegetables" }
+              { name: "Vegetable Manchurian", price: "₹220", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80", description: "Vegetable balls in a sweet and spicy sauce" },
+              { name: "Chilli Paneer", price: "₹270", image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&q=80", description: "Cottage cheese tossed with bell peppers in spicy sauce" },
+              { name: "Hakka Noodles", price: "₹200", image: "https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?auto=format&fit=crop&q=80", description: "Stir-fried noodles with vegetables in Indo-Chinese style" },
+              { name: "Szechuan Chicken", price: "₹290", image: "https://images.unsplash.com/photo-1603476870481-82bed3872a29?auto=format&fit=crop&q=80", description: "Spicy chicken dish with Szechuan peppers and vegetables" }
             ].map((dish, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
@@ -233,9 +295,9 @@ const Index = () => {
             
             {activeCategory === 'desserts' && [
               { name: "Gulab Jamun", price: "₹120", image: "https://images.unsplash.com/photo-1593200867631-5ad05295836c?auto=format&fit=crop&q=80", description: "Deep-fried milk solids soaked in sugar syrup" },
-              { name: "Rasmalai", price: "₹150", image: "https://images.unsplash.com/photo-1624711078164-28a1a2553d2f?auto=format&fit=crop&q=80", description: "Soft cottage cheese dumplings in sweetened milk" },
-              { name: "Gajar Halwa", price: "₹140", image: "https://images.unsplash.com/photo-1579197073550-bf44b469a6fe?auto=format&fit=crop&q=80", description: "Carrot pudding with nuts and cardamom" },
-              { name: "Kulfi", price: "₹110", image: "https://images.unsplash.com/photo-1584278860437-9a3f26c462f3?auto=format&fit=crop&q=80", description: "Traditional Indian ice cream with pistachios and saffron" }
+              { name: "Rasmalai", price: "₹150", image: "https://images.unsplash.com/photo-1602496241036-0a174537618e?auto=format&fit=crop&q=80", description: "Soft cottage cheese dumplings in sweetened milk" },
+              { name: "Gajar Halwa", price: "₹140", image: "https://images.unsplash.com/photo-1549222945-a69e6d910b9f?auto=format&fit=crop&q=80", description: "Carrot pudding with nuts and cardamom" },
+              { name: "Kulfi", price: "₹110", image: "https://images.unsplash.com/photo-1616684000067-36952fde56ec?auto=format&fit=crop&q=80", description: "Traditional Indian ice cream with pistachios and saffron" }
             ].map((dish, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
@@ -252,7 +314,7 @@ const Index = () => {
             {activeCategory === 'beverages' && [
               { name: "Masala Chai", price: "₹60", image: "https://images.unsplash.com/photo-1561336526-2914f13ceb36?auto=format&fit=crop&q=80", description: "Indian spiced tea with milk" },
               { name: "Mango Lassi", price: "₹90", image: "https://images.unsplash.com/photo-1527583426959-c481c04ebf0d?auto=format&fit=crop&q=80", description: "Yogurt-based mango smoothie" },
-              { name: "Badam Milk", price: "₹100", image: "https://images.unsplash.com/photo-1556679343-c1e5b6579fdb?auto=format&fit=crop&q=80", description: "Almond-flavored milk with saffron and cardamom" },
+              { name: "Badam Milk", price: "₹100", image: "https://images.unsplash.com/photo-1573812195421-50a396d17893?auto=format&fit=crop&q=80", description: "Almond-flavored milk with saffron and cardamom" },
               { name: "Fresh Lime Soda", price: "₹70", image: "https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?auto=format&fit=crop&q=80", description: "Refreshing lime soda, sweet or salted" }
             ].map((dish, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -402,7 +464,7 @@ const Index = () => {
           <Carousel className="w-full max-w-4xl mx-auto">
             <CarouselContent className="py-4">
               {reviews.map((review, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/3">
                   <div className="p-6 bg-[#f9f5f0] rounded-lg text-center h-full">
                     <div className="flex justify-center mb-4">
                       {Array(review.rating).fill(0).map((_, i) => (
@@ -415,6 +477,8 @@ const Index = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <CarouselPrevious className="left-0" />
+            <CarouselNext className="right-0" />
           </Carousel>
           
           <div className="text-center mt-8">
@@ -588,13 +652,12 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#5c2018] text-white py-10">
+      <footer className="bg-gradient-to-r from-[#5c2018] to-[#7a2b20] text-white py-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
               <h3 className="text-xl font-bold mb-4">Mama</h3>
               <p className="mb-4">The Family Restaurant - Where every meal feels like home.</p>
-              {/* Social media icons removed as requested */}
             </div>
             
             <div>
@@ -608,13 +671,16 @@ const Index = () => {
             </div>
             
             <div>
-              <h3 className="text-xl font-bold mb-4">Newsletter</h3>
+              <h3 className="text-xl font-bold mb-4">Exciting Offers</h3>
               <p className="mb-4">Subscribe to get special offers and news about our food festivals!</p>
-              <form className="flex">
+              <form onSubmit={handleSubscribe} className="flex">
                 <input 
                   type="email" 
                   placeholder="Your email" 
-                  className="px-4 py-2 w-full rounded-l-md focus:outline-none text-gray-800" 
+                  className="px-4 py-2 w-full rounded-l-md focus:outline-none text-gray-800"
+                  value={subscribeEmail}
+                  onChange={(e) => setSubscribeEmail(e.target.value)}
+                  required
                 />
                 <Button type="submit" className="rounded-l-none bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c]">
                   Subscribe
