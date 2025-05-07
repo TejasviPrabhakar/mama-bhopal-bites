@@ -21,7 +21,7 @@ jobs:
         run: echo "" > .nojekyll
 
       - name: Upload static site content
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: .  # or './dist' if your built site is in a folder
 
