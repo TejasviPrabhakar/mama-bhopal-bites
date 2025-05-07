@@ -17,13 +17,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Add .nojekyll to disable Jekyll processing
+      - name: Create .nojekyll file
         run: echo "" > .nojekyll
 
-      - name: Upload static site
+      - name: Upload static site content
         uses: actions/upload-pages-artifact@v2
         with:
-          path: .  # deploy everything in the root folder
+          path: .  # or './dist' if your built site is in a folder
 
       - name: Deploy to GitHub Pages
         id: deployment
