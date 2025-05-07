@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
@@ -14,6 +13,7 @@ const Index = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [guests, setGuests] = useState("2");
+  const [activeCategory, setActiveCategory] = useState("north-indian");
 
   const handleReservation = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +30,19 @@ const Index = () => {
     setGuests("2");
   };
 
+  const reviews = [
+    { name: "Rajesh K.", review: "Mama's restaurant felt like dining at my grandmother's home. The Dal Makhani was rich and creamy, just as it should be!", rating: 5 },
+    { name: "Priya M.", review: "Fantastic South Indian dishes - their Masala Dosa is the best I've had outside of Chennai. Great family atmosphere too!", rating: 5 },
+    { name: "Amit S.", review: "The Indo-Chinese fusion dishes are a must-try. Perfect blend of flavors and very authentic taste.", rating: 4 },
+    { name: "Sneha G.", review: "Wonderful place for family gatherings. We celebrated my parents' anniversary here and the staff was very accommodating.", rating: 5 },
+    { name: "Kiran J.", review: "The desserts are absolutely divine! Try their Gulab Jamun with ice cream - simply heavenly!", rating: 5 },
+    { name: "Rahul P.", review: "Best masala chai in town. Perfect with their samosas as an evening snack.", rating: 4 },
+    { name: "Meera S.", review: "The authentic flavors took me right back to my childhood. Will definitely be returning!", rating: 5 },
+    { name: "Vikram D.", review: "I love that they cater to all dietary preferences. As a vegetarian, I had so many options to choose from.", rating: 5 },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#f9f5f0]">
+    <div className="min-h-screen bg-[#f9f5f0] font-comic">
       {/* Header & Navigation */}
       <header className="bg-[#5c2018] text-white">
         <div className="container mx-auto px-4 py-6">
@@ -60,15 +71,14 @@ const Index = () => {
               <Button 
                 onClick={() => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' })}
                 size="lg" 
-                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c]"
+                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c] text-lg py-6 px-8"
               >
                 View Menu
               </Button>
               <Button 
                 onClick={() => document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' })}
                 size="lg"
-                variant="outline" 
-                className="text-white border-white hover:bg-white/10"
+                className="bg-[#f3bf7a] text-[#5c2018] hover:bg-[#e0a85c] text-lg py-6 px-8"
               >
                 Book a Table
               </Button>
@@ -82,18 +92,18 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-[#5c2018]">About Us</h2>
           <div className="grid md:grid-cols-2 gap-10 items-center">
-            <div>
-              <p className="mb-4 text-gray-700">
+            <div className="flex flex-col justify-between h-full">
+              <p className="mb-4 text-gray-700 text-justify">
                 Mama – The Family Restaurant is a warm, family-owned eatery nestled in the heart of Bhopal, Madhya Pradesh. 
                 Since its inception in 2018, its goal has been simple: to bring together the rich tapestry of Indian 
                 regional flavors under one cozy roof.
               </p>
-              <p className="mb-4 text-gray-700">
+              <p className="mb-4 text-gray-700 text-justify">
                 From the creamy gravies of North India to the tangy delights of the South and the fiery zest 
                 of Indo-Chinese creations, every dish at Mama reflects passion for authentic, home-style cooking.
               </p>
               <h3 className="text-xl font-semibold mb-2 text-[#5c2018]">Ambience & Experience</h3>
-              <p className="mb-4 text-gray-700">
+              <p className="mb-4 text-gray-700 text-justify">
                 Stepping into Mama, you're greeted by inviting décor that blends modern comfort with familial charm. 
                 Soft, ambient lighting, comfortable wooden seating, and hand-painted murals celebrating India's 
                 culinary heritage create a welcoming atmosphere—ideal for both intimate family dinners and 
@@ -110,7 +120,7 @@ const Index = () => {
           </div>
           <div className="mt-12">
             <h3 className="text-xl font-semibold mb-2 text-[#5c2018]">Community & Vision</h3>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-justify">
               Beyond day-to-day service, Mama hosts monthly themed food festivals, weekend brunches, 
               and interactive cooking demonstrations, fostering a sense of community among our patrons. 
               Its vision is to become Bhopal's premier destination for regional Indian cuisine while 
@@ -128,22 +138,122 @@ const Index = () => {
           
           {/* Menu categories */}
           <div className="mb-12 flex flex-wrap justify-center gap-4">
-            <Button variant="outline" className="border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white">North Indian</Button>
-            <Button variant="outline" className="border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white">South Indian</Button>
-            <Button variant="outline" className="border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white">Indo-Chinese</Button>
-            <Button variant="outline" className="border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white">Desserts</Button>
-            <Button variant="outline" className="border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white">Beverages</Button>
+            <Button 
+              variant="outline" 
+              className={`border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white ${activeCategory === 'north-indian' ? 'bg-[#5c2018] text-white' : ''}`}
+              onClick={() => setActiveCategory('north-indian')}
+            >
+              North Indian
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white ${activeCategory === 'south-indian' ? 'bg-[#5c2018] text-white' : ''}`}
+              onClick={() => setActiveCategory('south-indian')}
+            >
+              South Indian
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white ${activeCategory === 'indo-chinese' ? 'bg-[#5c2018] text-white' : ''}`}
+              onClick={() => setActiveCategory('indo-chinese')}
+            >
+              Indo-Chinese
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white ${activeCategory === 'desserts' ? 'bg-[#5c2018] text-white' : ''}`}
+              onClick={() => setActiveCategory('desserts')}
+            >
+              Desserts
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`border-[#5c2018] text-[#5c2018] hover:bg-[#5c2018] hover:text-white ${activeCategory === 'beverages' ? 'bg-[#5c2018] text-white' : ''}`}
+              onClick={() => setActiveCategory('beverages')}
+            >
+              Beverages
+            </Button>
           </div>
           
-          {/* Featured dishes */}
+          {/* Featured dishes based on category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
+            {activeCategory === 'north-indian' && [
               { name: "Butter Chicken", price: "₹350", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&q=80", description: "Tender chicken in a rich, creamy tomato sauce" },
-              { name: "Masala Dosa", price: "₹180", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&q=80", description: "Crispy rice pancake filled with spiced potatoes" },
-              { name: "Vegetable Manchurian", price: "₹220", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&q=80", description: "Vegetable balls in a sweet and spicy sauce" },
               { name: "Paneer Tikka", price: "₹280", image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d6?auto=format&fit=crop&q=80", description: "Marinated cottage cheese grilled to perfection" },
               { name: "Dal Makhani", price: "₹220", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&q=80", description: "Slow-cooked black lentils with cream and spices" },
               { name: "Chicken Biryani", price: "₹320", image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&q=80", description: "Aromatic rice dish with tender chicken pieces" }
+            ].map((dish, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold text-lg text-[#5c2018]">{dish.name}</h3>
+                    <span className="font-semibold text-[#5c2018]">{dish.price}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm">{dish.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {activeCategory === 'south-indian' && [
+              { name: "Masala Dosa", price: "₹180", image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&q=80", description: "Crispy rice pancake filled with spiced potatoes" },
+              { name: "Idli Sambhar", price: "₹140", image: "https://images.unsplash.com/photo-1574289176974-60c2887cdd84?auto=format&fit=crop&q=80", description: "Steamed rice cakes served with lentil soup and chutney" },
+              { name: "Rava Uttapam", price: "₹170", image: "https://images.unsplash.com/photo-1626788460425-6f51fef14c1f?auto=format&fit=crop&q=80", description: "Semolina pancakes topped with vegetables" },
+              { name: "Chettinad Chicken", price: "₹340", image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&q=80", description: "Spicy chicken curry with aromatic spices from Chettinad region" }
+            ].map((dish, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold text-lg text-[#5c2018]">{dish.name}</h3>
+                    <span className="font-semibold text-[#5c2018]">{dish.price}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm">{dish.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {activeCategory === 'indo-chinese' && [
+              { name: "Vegetable Manchurian", price: "₹220", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&q=80", description: "Vegetable balls in a sweet and spicy sauce" },
+              { name: "Chilli Paneer", price: "₹270", image: "https://images.unsplash.com/photo-1567337710282-00832b415979?auto=format&fit=crop&q=80", description: "Cottage cheese tossed with bell peppers in spicy sauce" },
+              { name: "Hakka Noodles", price: "₹200", image: "https://images.unsplash.com/photo-1619414506841-a036b516d530?auto=format&fit=crop&q=80", description: "Stir-fried noodles with vegetables in Indo-Chinese style" },
+              { name: "Szechuan Chicken", price: "₹290", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&q=80", description: "Spicy chicken dish with Szechuan peppers and vegetables" }
+            ].map((dish, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold text-lg text-[#5c2018]">{dish.name}</h3>
+                    <span className="font-semibold text-[#5c2018]">{dish.price}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm">{dish.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {activeCategory === 'desserts' && [
+              { name: "Gulab Jamun", price: "₹120", image: "https://images.unsplash.com/photo-1593200867631-5ad05295836c?auto=format&fit=crop&q=80", description: "Deep-fried milk solids soaked in sugar syrup" },
+              { name: "Rasmalai", price: "₹150", image: "https://images.unsplash.com/photo-1624711078164-28a1a2553d2f?auto=format&fit=crop&q=80", description: "Soft cottage cheese dumplings in sweetened milk" },
+              { name: "Gajar Halwa", price: "₹140", image: "https://images.unsplash.com/photo-1579197073550-bf44b469a6fe?auto=format&fit=crop&q=80", description: "Carrot pudding with nuts and cardamom" },
+              { name: "Kulfi", price: "₹110", image: "https://images.unsplash.com/photo-1584278860437-9a3f26c462f3?auto=format&fit=crop&q=80", description: "Traditional Indian ice cream with pistachios and saffron" }
+            ].map((dish, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-bold text-lg text-[#5c2018]">{dish.name}</h3>
+                    <span className="font-semibold text-[#5c2018]">{dish.price}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm">{dish.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {activeCategory === 'beverages' && [
+              { name: "Masala Chai", price: "₹60", image: "https://images.unsplash.com/photo-1561336526-2914f13ceb36?auto=format&fit=crop&q=80", description: "Indian spiced tea with milk" },
+              { name: "Mango Lassi", price: "₹90", image: "https://images.unsplash.com/photo-1527583426959-c481c04ebf0d?auto=format&fit=crop&q=80", description: "Yogurt-based mango smoothie" },
+              { name: "Badam Milk", price: "₹100", image: "https://images.unsplash.com/photo-1556679343-c1e5b6579fdb?auto=format&fit=crop&q=80", description: "Almond-flavored milk with saffron and cardamom" },
+              { name: "Fresh Lime Soda", price: "₹70", image: "https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9e?auto=format&fit=crop&q=80", description: "Refreshing lime soda, sweet or salted" }
             ].map((dish, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <img src={dish.image} alt={dish.name} className="h-48 w-full object-cover" />
@@ -233,6 +343,50 @@ const Index = () => {
                       ))}
                     </div>
                   </div>
+                  
+                  {/* Desserts Section */}
+                  <div>
+                    <h3 className="text-xl font-bold text-[#5c2018] mb-4">Desserts</h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {[
+                        { name: "Gulab Jamun", price: "₹120" },
+                        { name: "Rasmalai", price: "₹150" },
+                        { name: "Gajar Halwa", price: "₹140" },
+                        { name: "Kulfi", price: "₹110" },
+                        { name: "Jalebi", price: "₹100" },
+                        { name: "Rice Kheer", price: "₹130" },
+                        { name: "Rasgulla", price: "₹140" },
+                        { name: "Malpua", price: "₹160" }
+                      ].map((item, i) => (
+                        <div key={i} className="flex justify-between border-b pb-2">
+                          <span>{item.name}</span>
+                          <span className="font-medium">{item.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Beverages Section */}
+                  <div>
+                    <h3 className="text-xl font-bold text-[#5c2018] mb-4">Beverages</h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {[
+                        { name: "Masala Chai", price: "₹60" },
+                        { name: "Mango Lassi", price: "₹90" },
+                        { name: "Badam Milk", price: "₹100" },
+                        { name: "Fresh Lime Soda", price: "₹70" },
+                        { name: "Cold Coffee", price: "₹120" },
+                        { name: "Fresh Fruit Juices", price: "₹110" },
+                        { name: "Mineral Water", price: "₹40" },
+                        { name: "Soft Drinks", price: "₹60" }
+                      ].map((item, i) => (
+                        <div key={i} className="flex justify-between border-b pb-2">
+                          <span>{item.name}</span>
+                          <span className="font-medium">{item.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -246,15 +400,10 @@ const Index = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-[#5c2018]">Customer Reviews</h2>
           
           <Carousel className="w-full max-w-4xl mx-auto">
-            <CarouselContent>
-              {[
-                { name: "Rajesh K.", review: "Mama's restaurant felt like dining at my grandmother's home. The Dal Makhani was rich and creamy, just as it should be!", rating: 5 },
-                { name: "Priya M.", review: "Fantastic South Indian dishes - their Masala Dosa is the best I've had outside of Chennai. Great family atmosphere too!", rating: 5 },
-                { name: "Amit S.", review: "The Indo-Chinese fusion dishes are a must-try. Perfect blend of flavors and very authentic taste.", rating: 4 },
-                { name: "Sneha G.", review: "Wonderful place for family gatherings. We celebrated my parents' anniversary here and the staff was very accommodating.", rating: 5 }
-              ].map((review, index) => (
-                <CarouselItem key={index}>
-                  <div className="p-6 bg-[#f9f5f0] rounded-lg text-center">
+            <CarouselContent className="py-4">
+              {reviews.map((review, index) => (
+                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                  <div className="p-6 bg-[#f9f5f0] rounded-lg text-center h-full">
                     <div className="flex justify-center mb-4">
                       {Array(review.rating).fill(0).map((_, i) => (
                         <span key={i} className="text-[#f3bf7a] text-xl">★</span>
@@ -445,20 +594,7 @@ const Index = () => {
             <div>
               <h3 className="text-xl font-bold mb-4">Mama</h3>
               <p className="mb-4">The Family Restaurant - Where every meal feels like home.</p>
-              <div className="flex space-x-4">
-                <a href="#" className="hover:text-[#f3bf7a]">
-                  <span className="sr-only">Facebook</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                </a>
-                <a href="#" className="hover:text-[#f3bf7a]">
-                  <span className="sr-only">Instagram</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
-                </a>
-                <a href="#" className="hover:text-[#f3bf7a]">
-                  <span className="sr-only">Twitter</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
-                </a>
-              </div>
+              {/* Social media icons removed as requested */}
             </div>
             
             <div>
