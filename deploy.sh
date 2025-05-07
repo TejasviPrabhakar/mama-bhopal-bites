@@ -14,7 +14,14 @@ touch .nojekyll
 if [ ! -d ".git" ]; then
   git init
   git checkout -b main
-  git remote add origin git@github.com:YOUR_USERNAME/YOUR_REPO_NAME.git
+  
+  echo "Enter your GitHub username:"
+  read username
+  
+  echo "Enter your repository name:"
+  read repo_name
+  
+  git remote add origin "git@github.com:$username/$repo_name.git"
 fi
 
 # Add all files
@@ -29,4 +36,4 @@ git push -f origin main:gh-pages
 # Navigate back to the root of the project
 cd ..
 
-echo "Deployed successfully!"
+echo "Deployed successfully! Your site should be available at https://$username.github.io/$repo_name/"

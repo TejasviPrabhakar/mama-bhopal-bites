@@ -37,23 +37,29 @@ npm i
 npm run dev
 ```
 
-## Deployment
+## Deployment to GitHub Pages
 
-This project can be easily deployed to GitHub Pages. Follow these steps:
+### Automatic Deployment (Recommended)
+
+This project includes GitHub Actions workflow for automatic deployment:
 
 1. Push your code to a GitHub repository
-2. Enable GitHub Pages in your repository settings
-3. Set up GitHub Actions by allowing workflows in your repository settings
-4. The deployment workflow will build and deploy the site automatically when you push to the main branch
+2. Go to your repository settings > Pages
+3. Under "Build and deployment", select "GitHub Actions" as the source
+4. Make sure GitHub Actions are enabled in your repository settings
+5. Push to the main branch to trigger deployment
 
-Alternatively, you can deploy manually using the provided script:
+Your site will be available at: `https://[your-username].github.io/[your-repo-name]/`
+
+### Manual Deployment
+
+You can also deploy manually:
 
 ```sh
 # Make the script executable
 chmod +x deploy.sh
 
-# Edit the script to update your GitHub username and repository name
-# Then run:
+# Run the deployment script and follow the prompts
 ./deploy.sh
 ```
 
@@ -66,6 +72,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase
 
 ## How can I deploy this project?
 

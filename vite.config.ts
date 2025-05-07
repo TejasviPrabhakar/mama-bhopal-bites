@@ -20,5 +20,5 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: "./", // This ensures assets are loaded correctly on GitHub Pages
+  base: "./", // Ensures assets are loaded correctly on GitHub Pages
 }));
